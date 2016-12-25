@@ -8,6 +8,7 @@
 #include "hslider.h"
 #include "playlist_display.h"
 #include "vslider.h"
+#include "dnd_loading.h"
 
 #include "player.h"
 #include "playlist.h"
@@ -35,6 +36,7 @@ class CONTROLS
 	HSLIDER* HSlider;
 
 	PLAYLIST_DISPLAY* PlaylistDisplay;
+	DND_LOADING* DndLoading;
 	VSLIDER* VSlider;
 	BUTTON_UP* ButtonLineUp;
 	BUTTON_DOWN* ButtonLineDown;

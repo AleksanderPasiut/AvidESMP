@@ -16,6 +16,10 @@ CONTROLS::CONTROLS(WNDPROC proc, PLAYER* Player, PLAYLIST* Playlist) :
 	Wheel(0),
 	HSlider(0),
 	PlaylistDisplay(0),
+	DndLoading(0),
+	VSlider(0),
+	ButtonLineUp(0),
+	ButtonLineDown(0),
 	Player(Player),
 	Playlist(Playlist),
 	autoplay_on_direct_file_open(true),
@@ -60,6 +64,7 @@ CONTROLS::CONTROLS(WNDPROC proc, PLAYER* Player, PLAYLIST* Playlist) :
 		HSlider = new HSLIDER(MainWindow, RectF(cx, 87, cx+4*cdx+cbs, 98), 20);
 
 		PlaylistDisplay = new PLAYLIST_DISPLAY(ListWindow, &Playlist->data);
+		DndLoading = new DND_LOADING(ListWindow, PlaylistDisplay);
 		VSlider = new VSLIDER(ListWindow, PlaylistDisplay);
 		ButtonLineUp = new BUTTON_UP(ListWindow);
 		ButtonLineDown = new BUTTON_DOWN(ListWindow);
@@ -70,6 +75,8 @@ CONTROLS::CONTROLS(WNDPROC proc, PLAYER* Player, PLAYLIST* Playlist) :
 	{
 		delete ButtonLineDown;
 		delete ButtonLineUp;
+		delete VSlider;
+		delete DndLoading;
 		delete PlaylistDisplay;
 
 		delete HSlider;
@@ -99,6 +106,7 @@ CONTROLS::~CONTROLS() noexcept
 	delete ButtonLineDown;
 	delete ButtonLineUp;
 	delete VSlider;
+	delete DndLoading;
 	delete PlaylistDisplay;
 	delete HSlider;
 	delete Wheel;
@@ -180,6 +188,7 @@ bool CONTROLS::EventProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) noe
 			{
 				ListWindow->InitPaint();
 				PlaylistDisplay->Paint();
+				DndLoading->Paint();
 				VSlider->Paint();
 				ButtonLineUp->Paint();
 				ButtonLineDown->Paint();
@@ -199,10 +208,17 @@ bool CONTROLS::EventProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) noe
 		{
 			ProcessTimer(wParam);
 			Clock->Timer(wParam);
+			DndLoading->Timer(wParam);
 			break;
 		}
 		case WM_TRACKEND: ProcessTrackEnd(); break;
-		case WM_DROPFILES: Playlist->StartDragNDrop(reinterpret_cast<HDROP>(wParam)); break;
+		case WM_DROPFILES: { Playlist->StartDragNDrop(reinterpret_cast<HDROP>(wParam)); break; }
+		case PLAYLIST::WM_LOADING_FACTOR:
+		{
+			if (wParam)
+				DndLoading->IncFactor();
+			else DndLoading->DecFactor();
+		}
 	}
 
 	MainWindow->EventProc(hwnd, uMsg, wParam, lParam);

@@ -69,7 +69,7 @@ void SETTINGS::LoadFile() noexcept
 {
 	using namespace std;
 
-	fstream FS(path, fstream::in);
+	fstream FS(path, fstream::in | fstream::binary);
 
 	if (!FS)
 		return;
@@ -86,7 +86,7 @@ void SETTINGS::SaveFile() noexcept
 {
 	using namespace std;
 
-	fstream FS(path, fstream::out);
+	fstream FS(path, fstream::out | fstream::binary);
 
 	if (!FS)
 		return;

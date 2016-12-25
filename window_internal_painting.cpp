@@ -1,10 +1,10 @@
 #include "window.h"
 
-D2D1_COLOR_F CL(const D2D1_COLOR_F& color1, float scale, const D2D1_COLOR_F& color2) noexcept
+D2D1_COLOR_F CL(const D2D1_COLOR_F& color1, float scale, const D2D1_COLOR_F& color2, float alpha = 1.0f) noexcept
 {
 	return D2D1::ColorF(color1.r*scale+color2.r*(1-scale),
 						color1.g*scale+color2.g*(1-scale),
-						color1.b*scale+color2.b*(1-scale));
+						color1.b*scale+color2.b*(1-scale), alpha);
 }
 
 
@@ -27,11 +27,14 @@ void WINDOW::InitInternalPainting()
 			throw 2;
 		if (FAILED(target->CreateSolidColorBrush(CL(core, 0.07f, background), &brush[WB_SHADOW])))
 			throw 3;
+		if (FAILED(target->CreateSolidColorBrush(CL(core, 0.9f, background, 0.5f), &brush[WB_TRANSLUSCENT])))
+			throw 4;
 	}
 	catch(int error)
 	{
 		switch(error)
 		{
+			case 4: brush[WB_SHADOW]->Release();
 			case 3: brush[WB_HOVER]->Release();
 			case 2: brush[WB_CLICK]->Release();
 			case 1: brush[WB_MAIN]->Release();
@@ -41,7 +44,7 @@ void WINDOW::InitInternalPainting()
 }
 void WINDOW::UpdateInternalPainting(D2D1_COLOR_F core, D2D1_COLOR_F back) noexcept
 {
-	ID2D1SolidColorBrush* new_brush[4];
+	ID2D1SolidColorBrush* new_brush[5];
 
 	try
 	{
@@ -53,11 +56,14 @@ void WINDOW::UpdateInternalPainting(D2D1_COLOR_F core, D2D1_COLOR_F back) noexce
 			throw 2;
 		if (FAILED(target->CreateSolidColorBrush(CL(core, 0.07f, back), &new_brush[WB_SHADOW])))
 			throw 3;
+		if (FAILED(target->CreateSolidColorBrush(CL(core, 0.6f, background, 0.3f), &new_brush[WB_TRANSLUSCENT])))
+			throw 4;
 	}
 	catch(int error)
 	{
 		switch(error)
 		{
+			case 4: new_brush[WB_TRANSLUSCENT]->Release();
 			case 3: new_brush[WB_HOVER]->Release();
 			case 2: new_brush[WB_CLICK]->Release();
 			case 1: new_brush[WB_MAIN]->Release();
@@ -66,7 +72,7 @@ void WINDOW::UpdateInternalPainting(D2D1_COLOR_F core, D2D1_COLOR_F back) noexce
 
 	background = back;
 
-	for (unsigned i = 0; i < 4; i++)
+	for (unsigned i = 0; i < 5; i++)
 	{
 		brush[i]->Release();
 		brush[i] = new_brush[i];
@@ -76,7 +82,7 @@ void WINDOW::UpdateInternalPainting(D2D1_COLOR_F core, D2D1_COLOR_F back) noexce
 }
 void WINDOW::FreeInternalPainting() noexcept
 {
-	for (unsigned i = 0; i < 4; i++)
+	for (unsigned i = 0; i < 5; i++)
 		brush[i]->Release();
 }
 void WINDOW::InternalPainting() noexcept

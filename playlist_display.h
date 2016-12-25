@@ -61,5 +61,6 @@ class PLAYLIST_DISPLAY
 	bool EventProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) noexcept;
 
 	friend class VSLIDER;
+	friend class DND_LOADING;
 	friend class CONTROLS;
 };

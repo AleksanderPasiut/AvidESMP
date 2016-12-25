@@ -7,6 +7,7 @@ class PLAYLIST
 {
 	static const unsigned WM_TRANSFER = 0x8001;
 	static const unsigned WM_DROPFILESLOADED = 0x8004;
+	static const unsigned WM_LOADING_FACTOR = 0x8005;
 
 	PLAYLIST_DATA data;
 
@@ -38,7 +39,7 @@ class PLAYLIST
 	bool RetClearPlaylistOnShutdown() const noexcept { return data.RetClearPlaylistOnShutdown(); }
 
 	// playlist_drag_n_drop.cpp
-	void StartDragNDrop(HDROP hDrop) const noexcept;
+	void StartDragNDrop(HDROP hDrop) noexcept;
 	friend DWORD WINAPI DragNDropThreadFunction(void*) noexcept;
 	void FinishDragNDrop(WPARAM wParam, LPARAM lParam) noexcept;
 

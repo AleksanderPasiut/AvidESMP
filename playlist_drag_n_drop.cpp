@@ -1,6 +1,6 @@
 #include "playlist.h"
 
-void PLAYLIST::StartDragNDrop(HDROP hDrop) const noexcept
+void PLAYLIST::StartDragNDrop(HDROP hDrop) noexcept
 {
 	try
 	{
@@ -8,9 +8,10 @@ void PLAYLIST::StartDragNDrop(HDROP hDrop) const noexcept
 
 		DWORD ThreadId;
 		HANDLE hThread = CreateThread(0, 0, DragNDropThreadFunction, reinterpret_cast<void*>(data), 0, &ThreadId);
+		SendMessage(TRACK_DATA::hwnd, WM_LOADING_FACTOR, 1, 0);
 		CloseHandle(hThread);
 	}
-	catch(...) {}
+	catch(...) { }
 }
 void LoadRecursive(std::wstring& path, std::vector<TRACK_DATA*>* inserted) noexcept
 {
@@ -72,4 +73,6 @@ void PLAYLIST::FinishDragNDrop(WPARAM wParam, LPARAM lParam) noexcept
 	delete dnd->inserted;
 	DragFinish(dnd->hDrop);
 	delete dnd;
+
+	SendMessage(TRACK_DATA::hwnd, WM_LOADING_FACTOR, 0, 0);
 }

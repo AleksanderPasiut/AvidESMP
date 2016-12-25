@@ -26,6 +26,7 @@ enum WINDOW_BRUSH
 	WB_CLICK = 1,
 	WB_HOVER = 2,
 	WB_SHADOW = 3,
+	WB_TRANSLUSCENT = 4,
 };
 
 class WINDOW
@@ -40,7 +41,7 @@ class WINDOW
 	TRACKMOUSEEVENT tme;
 
 	D2D1_COLOR_F background;
-	ID2D1SolidColorBrush* brush[4];
+	ID2D1SolidColorBrush* brush[5];
 	float rim;
 	float margin;
 	float shw;
